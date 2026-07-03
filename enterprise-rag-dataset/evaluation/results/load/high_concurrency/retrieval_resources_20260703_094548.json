@@ -1,0 +1,71 @@
+[
+  {
+    "timestamp": "2026-07-03T09:45:52",
+    "host_total_bytes": 32720089088,
+    "host_used_bytes": 9131118592,
+    "host_available_bytes": 22898454528,
+    "containers": {
+      "cloudorder-ops-api": {
+        "cpu_percent": 0.3,
+        "memory_mib": 120.7,
+        "memory_raw": "120.7MiB / 512MiB"
+      },
+      "onyx-api_server-1": {
+        "cpu_percent": 99.83,
+        "memory_mib": 880.4,
+        "memory_raw": "880.4MiB / 30.47GiB"
+      },
+      "onyx-background-1": {
+        "cpu_percent": 1.9,
+        "memory_mib": 2504.704,
+        "memory_raw": "2.446GiB / 30.47GiB"
+      },
+      "onyx-inference_model_server-1": {
+        "cpu_percent": 0.11,
+        "memory_mib": 1134.592,
+        "memory_raw": "1.108GiB / 30.47GiB"
+      },
+      "onyx-indexing_model_server-1": {
+        "cpu_percent": 0.11,
+        "memory_mib": 338.2,
+        "memory_raw": "338.2MiB / 30.47GiB"
+      },
+      "onyx-nginx-1": {
+        "cpu_percent": 0.03,
+        "memory_mib": 9.656,
+        "memory_raw": "9.656MiB / 30.47GiB"
+      },
+      "onyx-web_server-1": {
+        "cpu_percent": 0.0,
+        "memory_mib": 127.0,
+        "memory_raw": "127MiB / 30.47GiB"
+      },
+      "onyx-cache-1": {
+        "cpu_percent": 0.86,
+        "memory_mib": 6.926,
+        "memory_raw": "6.926MiB / 30.47GiB"
+      },
+      "onyx-code-interpreter-1": {
+        "cpu_percent": 0.14,
+        "memory_mib": 66.27,
+        "memory_raw": "66.27MiB / 30.47GiB"
+      },
+      "onyx-minio-1": {
+        "cpu_percent": 0.09,
+        "memory_mib": 240.2,
+        "memory_raw": "240.2MiB / 30.47GiB"
+      },
+      "onyx-relational_db-1": {
+        "cpu_percent": 24.69,
+        "memory_mib": 292.5,
+        "memory_raw": "292.5MiB / 30.47GiB"
+      },
+      "onyx-opensearch-1": {
+        "cpu_percent": 144.28,
+        "memory_mib": 3398.656,
+        "memory_raw": "3.319GiB / 30.47GiB"
+      }
+    },
+    "error": ""
+  }
+]

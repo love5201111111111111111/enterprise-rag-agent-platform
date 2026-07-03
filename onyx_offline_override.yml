@@ -1,0 +1,16 @@
+services:
+  api_server:
+    environment:
+      LITELLM_EXTRA_BODY: '{"thinking":{"type":"disabled"}}'
+  background:
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+  indexing_model_server:
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
+  inference_model_server:
+    environment:
+      HF_HUB_OFFLINE: "1"
+      TRANSFORMERS_OFFLINE: "1"
