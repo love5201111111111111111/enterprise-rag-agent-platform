@@ -51,10 +51,10 @@ powershell -ExecutionPolicy Bypass -File scripts\run_ci.ps1
 1. 手动输入 `DEPLOY`；
 2. 再次执行测试与安全校验；
 3. 通过 `production` 环境审批；
-4. 在 GitHub Runner 构建并导出 Linux 容器镜像；
-5. 上传镜像、代码包和部署脚本，服务器只加载已验证镜像，不现场访问 PyPI；
-6. 等待 Docker 健康检查，失败则恢复上一版。
+4. 在 CI 中完成容器构建与健康冒烟测试；
+5. CD 仅上传小型源码包和部署脚本，服务器先构建候选镜像，构建成功后才切换容器；
+6. 等待 Docker 健康检查，失败则恢复上一版源码和镜像。
 
 ## 当前状态与边界
 
-代码已推送到公开仓库，`main` Push 与 Dependabot Pull Request 的两个 CI Job 均已通过。CD 工作流尚未执行，因为仍需在仓库中配置 `production` Environment、Required reviewers 和四个部署 Secrets。不要扩大 Mall Connector 只读 Token 的权限，也不要将个人 SSH 管理密钥直接复用为长期部署凭据。
+代码已推送到公开仓库，`main` Push 与 Dependabot Pull Request 的两个 CI Job 均已通过。`production` Environment、Required reviewer、`main` 部署限制和四个部署 Secrets 均已配置，并使用独立的受限 SSH 密钥。第一次 CD 运行暴露了 GitHub 海外 Runner 向国内云服务器直传约 55 MB 镜像的链路瓶颈，因此交付方式改为上传约 15 KB 源码包并在服务器构建候选镜像；线上旧容器在上传失败期间持续健康。不要扩大 Mall Connector 只读 Token 的权限，也不要将个人 SSH 管理密钥复用为长期部署凭据。

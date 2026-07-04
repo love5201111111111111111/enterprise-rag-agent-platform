@@ -16,15 +16,15 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$ARCHIVE" || -z "$IMAGE_ARCHIVE" || -z "$TARGET" ]]; then
-  echo "Usage: $0 --archive FILE --image FILE --target DIRECTORY [--revision SHA]" >&2
+if [[ -z "$ARCHIVE" || -z "$TARGET" ]]; then
+  echo "Usage: $0 --archive FILE --target DIRECTORY [--image FILE] [--revision SHA]" >&2
   exit 2
 fi
 if [[ ! -f "$ARCHIVE" ]]; then
   echo "Release archive does not exist: $ARCHIVE" >&2
   exit 2
 fi
-if [[ ! -f "$IMAGE_ARCHIVE" ]]; then
+if [[ -n "$IMAGE_ARCHIVE" && ! -f "$IMAGE_ARCHIVE" ]]; then
   echo "Container image archive does not exist: $IMAGE_ARCHIVE" >&2
   exit 2
 fi
@@ -54,12 +54,16 @@ STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 WORK_DIR="$(mktemp -d /tmp/cloudorder-release.XXXXXX)"
 BACKUP_DIR="${TARGET}.rollback-${STAMP}"
 ROLLBACK_IMAGE="cloudorder-ops-api:rollback-${STAMP}"
+CANDIDATE_IMAGE="cloudorder-ops-api:candidate-${STAMP}"
 PREVIOUS_IMAGE_ID="$("${DOCKER[@]}" image inspect cloudorder-ops-api:1.0.0 --format '{{.Id}}' 2>/dev/null || true)"
 
 cleanup() {
   rm -rf "$WORK_DIR"
   rm -f "$ARCHIVE"
-  rm -f "$IMAGE_ARCHIVE"
+  if [[ -n "$IMAGE_ARCHIVE" ]]; then
+    rm -f "$IMAGE_ARCHIVE"
+  fi
+  "${DOCKER[@]}" image rm "$CANDIDATE_IMAGE" >/dev/null 2>&1 || true
 }
 trap cleanup EXIT
 
@@ -76,8 +80,14 @@ cp "$TARGET/.env" "$NEW_SOURCE/.env"
 if [[ -n "$PREVIOUS_IMAGE_ID" ]]; then
   "${DOCKER[@]}" tag "$PREVIOUS_IMAGE_ID" "$ROLLBACK_IMAGE"
 fi
-echo "Loading CI-built container image for revision $REVISION..."
-"${DOCKER[@]}" load -i "$IMAGE_ARCHIVE"
+
+if [[ -n "$IMAGE_ARCHIVE" ]]; then
+  echo "Loading CI-built container image for revision $REVISION..."
+  "${DOCKER[@]}" load -i "$IMAGE_ARCHIVE"
+else
+  echo "Building candidate container image on the deployment host for revision $REVISION..."
+  "${DOCKER[@]}" build --tag "$CANDIDATE_IMAGE" "$NEW_SOURCE"
+fi
 
 echo "Creating rollback copy at $BACKUP_DIR"
 cp -a "$TARGET" "$BACKUP_DIR"
@@ -90,14 +100,17 @@ rollback() {
   if "${DOCKER[@]}" image inspect "$ROLLBACK_IMAGE" >/dev/null 2>&1; then
     "${DOCKER[@]}" tag "$ROLLBACK_IMAGE" cloudorder-ops-api:1.0.0
   fi
-  "${DOCKER[@]}" compose --project-directory "$TARGET" up -d --force-recreate
+  "${DOCKER[@]}" compose --project-directory "$TARGET" up -d --force-recreate --no-build
 }
 trap rollback ERR
 
 find "$TARGET" -mindepth 1 -maxdepth 1 ! -name .env -exec rm -rf -- {} +
 cp -a "$NEW_SOURCE"/. "$TARGET"/
+if [[ -z "$IMAGE_ARCHIVE" ]]; then
+  "${DOCKER[@]}" tag "$CANDIDATE_IMAGE" cloudorder-ops-api:1.0.0
+fi
 printf '%s\n' "$REVISION" > "$TARGET/.deployed-revision"
-"${DOCKER[@]}" compose --project-directory "$TARGET" up -d
+"${DOCKER[@]}" compose --project-directory "$TARGET" up -d --no-build
 
 for _ in $(seq 1 30); do
   STATUS="$("${DOCKER[@]}" inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' cloudorder-ops-api 2>/dev/null || true)"
