@@ -1,5 +1,7 @@
 # 企业级 RAG 与只读运维 Agent 平台
 
+[![CI](https://github.com/love5201111111111111111/enterprise-rag-agent-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/love5201111111111111111/enterprise-rag-agent-platform/actions/workflows/ci.yml)
+
 这是一个基于 Onyx 二次开发的企业级 LLM 应用工程项目。项目将中文企业知识库、真实 GitHub 研发数据、RAG 评测、幻觉治理和受控工具调用整合为一套可部署、可量化、可审计的系统。
 
 > 项目定位：大模型应用 / RAG / Agent / AI 后端 / LLMOps。  
