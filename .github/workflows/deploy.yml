@@ -29,7 +29,7 @@ jobs:
     name: Deploy with health check and rollback
     runs-on: ubuntu-22.04
     needs: validate-confirmation
-    timeout-minutes: 20
+    timeout-minutes: 30
     environment: production
     steps:
       - name: Check out repository
@@ -71,8 +71,6 @@ jobs:
 
       - name: Package release
         run: |
-          docker build --tag cloudorder-ops-api:1.0.0 cloudorder-ops-api
-          docker save cloudorder-ops-api:1.0.0 | gzip > cloudorder-ops-api-image.tgz
           tar --create --gzip --file cloudorder-ops-api.tgz cloudorder-ops-api
 
       - name: Upload release and deploy script
@@ -80,7 +78,7 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
           DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
         run: |
-          scp cloudorder-ops-api.tgz cloudorder-ops-api-image.tgz scripts/deploy_cloudorder_ops_api.sh \
+          scp cloudorder-ops-api.tgz scripts/deploy_cloudorder_ops_api.sh \
             "$DEPLOY_USER@$DEPLOY_HOST:/tmp/"
 
       - name: Deploy
@@ -91,6 +89,5 @@ jobs:
           ssh "$DEPLOY_USER@$DEPLOY_HOST" \
             "bash /tmp/deploy_cloudorder_ops_api.sh \
               --archive /tmp/cloudorder-ops-api.tgz \
-              --image /tmp/cloudorder-ops-api-image.tgz \
               --target /home/$DEPLOY_USER/cloudorder-ops-api \
               --revision $GITHUB_SHA"
