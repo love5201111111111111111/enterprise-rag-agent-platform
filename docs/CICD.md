@@ -57,4 +57,8 @@ powershell -ExecutionPolicy Bypass -File scripts\run_ci.ps1
 
 ## 当前状态与边界
 
-代码已推送到公开仓库，`main` Push 与 Dependabot Pull Request 的两个 CI Job 均已通过。`production` Environment、Required reviewer、`main` 部署限制和四个部署 Secrets 均已配置，并使用独立的受限 SSH 密钥。第一次 CD 运行暴露了 GitHub 海外 Runner 向国内云服务器直传约 55 MB 镜像的链路瓶颈，因此交付方式改为上传约 15 KB 源码包并在服务器构建候选镜像；线上旧容器在上传失败期间持续健康。不要扩大 Mall Connector 只读 Token 的权限，也不要将个人 SSH 管理密钥复用为长期部署凭据。
+代码已推送到公开仓库，`main` Push 与 Dependabot Pull Request 的两个 CI Job 均已通过。`production` Environment、Required reviewer、`main` 部署限制和四个部署 Secrets 均已配置，并使用独立的受限 SSH 密钥。
+
+第一次 CD 运行暴露了 GitHub 海外 Runner 向国内云服务器直传约 55 MB 镜像的链路瓶颈，上传约 20 分钟后被超时取消，线上旧容器持续健康。修复通过受保护分支的 Pull Request 合并：交付方式改为上传约 15 KB 源码包，在服务器构建候选镜像，构建成功后才替换运行版本。第二次 CD 在约 5 分钟内成功部署提交 `4d2f269`，容器健康检查通过；鉴权业务冒烟返回 HTTP 200 且 `read_only=true`，无密钥请求返回 HTTP 401。
+
+不要扩大 Mall Connector 只读 Token 的权限，也不要将个人 SSH 管理密钥复用为长期部署凭据。
