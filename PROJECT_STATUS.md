@@ -21,7 +21,7 @@
 | 基础健康检查 | 完成 | JSON 输出，覆盖 HTTP、容器、磁盘和内存 |
 | PostgreSQL 备份 | 完成 | gzip、SHA-256、保留策略和临时库恢复演练 |
 | 异地备份与完整灾备 | 待完成 | 需接入腾讯云 COS，并覆盖 MinIO/OpenSearch |
-| CI/CD 流水线 | 配置完成 | 本机 CI、容器冒烟、手动审批部署与回滚已验证；待创建远程仓库激活 Actions |
+| CI/CD 流水线 | CI 完成 / CD 待激活 | GitHub Actions 双 Job 已通过，Dependabot PR 均通过；待配置主分支规则、production 环境与部署 Secrets |
 | 求职材料 | 进行中 | README 已建立，待补演示与面试材料 |
 
-当前判断：RAG/Agent MVP 已完成；完整求职项目约 88%。
+当前判断：RAG/Agent MVP 已完成；完整求职项目约 90%。

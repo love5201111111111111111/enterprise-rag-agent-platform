@@ -100,5 +100,5 @@ flowchart LR
 
 1. 增加 Prometheus/Grafana 指标、日志告警和腾讯云 COS 异地备份。
 2. 配置域名、HTTPS、限流和公网访问收敛。
-3. 创建远程 GitHub 仓库并启用 Branch Protection、`production` Environment 审批和 Actions Secrets。
+3. 启用 Branch Protection、`production` Environment 审批和 Actions Secrets，完成首次受控部署演练。
 4. 完成模型冷启动预热、演示视频和真实 GitHub 数据源的面试讲解材料。

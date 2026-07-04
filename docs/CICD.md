@@ -55,6 +55,6 @@ powershell -ExecutionPolicy Bypass -File scripts\run_ci.ps1
 5. 上传镜像、代码包和部署脚本，服务器只加载已验证镜像，不现场访问 PyPI；
 6. 等待 Docker 健康检查，失败则恢复上一版。
 
-## 当前边界
+## 当前状态与边界
 
-当前 GitHub 凭据是只读 Token，因此本地 CI/CD 已完成，但尚未自动创建或推送远程仓库。远程发布应使用 GitHub 网页创建空仓库，或单独创建最小权限写入凭据；不要扩大现有 Mall 只读 Token 的权限。
+代码已推送到公开仓库，`main` Push 与 Dependabot Pull Request 的两个 CI Job 均已通过。CD 工作流尚未执行，因为仍需在仓库中配置 `production` Environment、Required reviewers 和四个部署 Secrets。不要扩大 Mall Connector 只读 Token 的权限，也不要将个人 SSH 管理密钥直接复用为长期部署凭据。
